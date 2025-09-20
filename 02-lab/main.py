@@ -31,7 +31,7 @@ def collatz_print_sequence(number: int):
         else:
             number = 3*number + 1
 
-        print(f' -> {number}', end="")
+        print(f', {number}', end="")
 
     print("")
 

@@ -11,7 +11,6 @@ int collatz_length(long long int number) {
 
 	if (number <= 0) return -1;
 
-	//for (; number != 1; len++) {
 	while (number != 1) {
 		// collatz
 		if (number % 2 == 0) {
@@ -33,10 +32,9 @@ void collatz_print_sequence(long long int number) {
         return;
 	}
 
-	printf("%1$lld: %1$lld", number);
+	printf("%lld: %lld", number, number);
 
 	while (number != 1) {
-
 		// collatz
 		if (number % 2 == 0) {
 			number = number / 2;
@@ -44,13 +42,13 @@ void collatz_print_sequence(long long int number) {
 			number = 3*number + 1;
 		}
 
-		printf(" -> %lld", number);
+		printf(", %lld", number);
 	}
 
 	puts("");
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
 	int max_len = 0;
 	long long int longest_num = 0;
 
