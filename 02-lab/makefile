@@ -1,14 +1,18 @@
 CFLAGS=-Wall -Werror -Wpedantic -O2
 CC=clang
 
-main: main.c
+build/main: main.c
+	mkdir -p build
+	$(CC) $(CFLAGS) -o $@ $<
 
-.PHONY: clean test
+.PHONY: clean
 clean:
 	-rm main
 
-test: main main.py
-	hyperfine './main' 'python ./main.py'
+.PHONY: test
+test: build/main main.py
+	hyperfine './build/main' 'python ./main.py'
 
-submission.zip: main.c main.py makefile
-	zip -r submission.zip main.c main.py results.md
+build/submission.zip: main.c main.py makefile results.md
+	mkdir -p build
+	zip -r $@ $^

@@ -1,12 +1,15 @@
 CFLAGS=-Wall -Werror -Wpedantic
 
-executables=program1 program2 program3
+.PHONY: all
+all: build/program1 build/program2 build/program3 build/submission.zip
 
-all: $(executables)
+build/%: %.c
+	mkdir -p build
+	$(CC) $(CFLAGS) -o $@ $<
 
 .PHONY: clean
 clean:
 	-rm $(executables) submission.zip
 
-submission.zip: *.c makefile
-	zip -r submission.zip *.c makefile
+build/submission.zip: *.c makefile
+	zip -r $@ $^
