@@ -12,10 +12,10 @@ build/main: main.c
 clean:
 	-rm main
 
-.PHONY: test
-test: build/main main.py
-	hyperfine './build/main' 'python ./main.py'
+.PHONY: run
+run: build/main
+	./build/main
 
-build/submission.zip: main.c main.py makefile results.md
+build/submission.zip: main.c makefile
 	mkdir -p build
 	zip -r $@ $^

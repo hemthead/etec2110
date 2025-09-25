@@ -11,5 +11,13 @@ build/%: %.c
 clean:
 	-rm $(executables) submission.zip
 
+.PHONY: run
+run: build/program1 build/program2 build/program3
+	./build/program1
+	@echo
+	./build/program2
+	@echo
+	./build/program3
+
 build/submission.zip: *.c makefile
 	zip -r $@ $^
