@@ -5,8 +5,8 @@
 #include <stdio.h>
 
 int main(void) {
-    printf("John Reed\n");
-    printf("\"'Portability is for people who cannot write new programs' "
-           "-me, right now (with tounge in cheek)\"\n");
-    printf("    -Linus Torvalds\n");
+  printf("John Reed\n");
+  printf("\"'Portability is for people who cannot write new programs' "
+         "-me, right now (with tounge in cheek)\"\n");
+  printf("    -Linus Torvalds\n");
 }

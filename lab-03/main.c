@@ -8,21 +8,21 @@ const unsigned char hexTable[] = {'0', '1', '2', '3', '4', '5', '6', '7',
                                   '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
 void printBinary(unsigned char ch) {
-	printf("0b");
+  printf("0b");
 
-	for (unsigned char mask = 0x80; mask > 0; mask >>= 1) {
-		if (ch & mask) {
-			printf("1");
-		} else {
-			printf("0");
-		}
-	}
+  for (unsigned char mask = 0x80; mask > 0; mask >>= 1) {
+    if (ch & mask) {
+      printf("1");
+    } else {
+      printf("0");
+    }
+  }
 }
 
 void printHex(unsigned char ch) {
-	unsigned char low = ch & 0xF;
-	unsigned char high = ch >> 4;
-	printf("0x%c%c", hexTable[high], hexTable[low]);
+  unsigned char low = ch & 0xF;
+  unsigned char high = ch >> 4;
+  printf("0x%c%c", hexTable[high], hexTable[low]);
 }
 
 void printTable(unsigned char startChar, unsigned char endChar) {
@@ -31,9 +31,9 @@ void printTable(unsigned char startChar, unsigned char endChar) {
   for (unsigned char ch = startChar; ch <= endChar; ch++) {
     printf("\t%d\t%c\t", ch, ch);
     printBinary(ch);
-	printf("\t");
+    printf("\t");
     printHex(ch);
-	printf("\n");
+    printf("\n");
   }
 }
 
