@@ -1,6 +1,6 @@
 // Name: John Reed
-// Class.Section: etec2110-01 Systems Programming
-// Lab_Part: 4 Arrays, Strings, and Flow Control _ Program I
+// Class.Section: etec2110.01 Systems Programming
+// Lab_Part: 4_I Arrays, Strings, and Flow Control
 
 #include <stdio.h>
 
@@ -15,20 +15,20 @@ void convertToLeetSpeak(char *text) {
       *text = '4';
       break;
 
-    case 's':
-      *text = '5';
-      break;
-
-    case 'S':
-      *text = '$';
-      break;
-
     case 'b':
       *text = '6';
       break;
 
     case 'B':
       *text = '8';
+      break;
+
+    case 's':
+      *text = '5';
+      break;
+
+    case 'S':
+      *text = '$';
       break;
 
     case 'e':
@@ -46,14 +46,14 @@ void convertToLeetSpeak(char *text) {
       *text = '0';
       break;
 
-    case 'z':
-    case 'Z':
-      *text = '2';
-      break;
-
     case 't':
     case 'T':
       *text = '7';
+      break;
+
+    case 'z':
+    case 'Z':
+      *text = '2';
       break;
 
     default:

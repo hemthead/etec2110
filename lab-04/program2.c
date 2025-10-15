@@ -1,6 +1,6 @@
 // Name: John Reed
-// Class.Section: etec2110-01 Systems Programming
-// Lab_Part: 4 Arrays, Strings, and Flow Control _ Program I
+// Class.Section: etec2110.01 Systems Programming
+// Lab_Part: 4_II Arrays, Strings, and Flow Control
 
 #include <stddef.h>
 #include <stdio.h>
@@ -28,7 +28,7 @@ int main(void) {
   fflush(stdout);
   scanf(" %40[^\n]s", key_string);
 
-  size_t input_len = strnlen(input_string, 40);
+  int input_len = strnlen(input_string, 4000);
 
   crypt(input_string, input_len, key_string);
   printf("Encrypted: %s\n", input_string);
