@@ -1,5 +1,4 @@
 CFLAGS=-Wall -Werror -Wpedantic
-CC=clang
 
 .PHONY: all
 all: build/game-of-life build/submission.zip
@@ -20,6 +19,6 @@ clean:
 run: build/game-of-life
 	./build/game-of-life
 
-build/submission.zip: *.c *.h makefile
+build/submission.zip: *.c *.h makefile *.gol *.md
 	mkdir -p build
 	zip -r $@ $^

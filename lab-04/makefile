@@ -1,5 +1,4 @@
 CFLAGS=-Wall -Werror -Wpedantic
-CC=clang
 
 .PHONY: all
 all: build/program1 build/program2 build/submission.zip

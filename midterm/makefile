@@ -1,5 +1,4 @@
 CFLAGS=-Wall -Werror -Wpedantic
-CC=clang
 
 .PHONY: all
 all: build/stringReverse build/cryptogramify build/rhombus build/rhombus2
