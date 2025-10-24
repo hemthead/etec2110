@@ -23,7 +23,7 @@ typedef union Board {
 } Board;
 
 // Initialize a `Board` to have `num_alive` alive cells randomly distributed throughout it.
-// The entire board is alive if `num_alive` is larger than the number of cells.
+// The entire board is set alive if `num_alive` is larger than the number of cells.
 void init_board(Board *board, int num_alive);
 
 // Displays a `Board` in a 2D format. Live cells marked with 'X' and dead with '-'.

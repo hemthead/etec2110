@@ -2,41 +2,76 @@
 // Class.Section: etec2110.01 Systems Programming
 // Lab_Part: 5 Arrays and Functions
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
 #include "game_of_life.h"
 
+#define INPUT_SIZE 256
+
 void print_help(void) {
-  printf("Enter in a command to control the game.\n"
-         "Commands:\n"
-         "<ENTER>:\tstep forward by one generation.\n"
-         "r <num>:\tstep forward by <num> generations.\n"
-         "[q]uit, [e]xit:\tleave the game.\n"
-         "[h]elp, ?:\tshow this help.\n");
+  printf(
+      "\nEnter in a command to control the game.\n"
+      "Commands arbitrarily limited to %d characters of input.\n"
+      "Commands:\n"
+      "<ENTER>:        step forward by one generation.\n"
+      "r <num>:        step forward by <num> generations.\n"
+      "s <seed> <num>: set the random seed and reinitialize the board with "
+      "<num> live cells.\n"
+      "l <path>:       load a board from a file (formatted same as output).\n"
+      "[d]isplay:      show current generation.\n"
+      "[q]uit, [e]xit: leave the game.\n"
+      "[h]elp, ?:      show this help.\n\n",
+      INPUT_SIZE - 1);
+}
+
+int load_board(char *path, Board *board) {
+  FILE *board_file = fopen(path, "r");
+  if (board_file == NULL) {
+    printf("Failed to open '%s'\n", path);
+    return -1;
+  }
+
+  // TODO: load board into memory line by line
+  //
+  // char buffer[BOARD_WIDTH+2];
+  // fgets(buffer, BOARD_WIDTH+2, board_file);
+  for (int row = 0; row < BOARD_HEIGHT; row++) {
+    // FIXME: this is scuffed ahh, you'd think a guy would check that it's
+    // formatted correctly first
+    fread(board->board[row], sizeof(char), BOARD_WIDTH, board_file);
+    fseek(board_file, 1, SEEK_CUR); // this so jank!
+  }
+
+  return 0;
 }
 
 int main(void) {
-  srand(time(NULL));
-  //srand(25);
+  unsigned int rand_seed = time(NULL);
+  srand(rand_seed);
+
+  int initial_live_cells = 300;
 
   Board board;
 
-  init_board(&board, 300);
-
-  char input[16];
+  init_board(&board, initial_live_cells);
   int current_gen = 0;
-  int running = 1;
-  while (running) {
-    printf("\nGeneration %d:\n", current_gen);
-    display_board(&board);
 
+  // print initial generation
+  printf("\nGeneration %d:\n", current_gen);
+  display_board(&board);
+
+  // input/game loop
+  char input[INPUT_SIZE];
+  bool running = true;
+  while (running) {
     printf("Next command: ");
     fflush(stdout);
 
-    // scanf(" %15[^\n]s", input);
-    if (fgets(input, 16, stdin) == NULL) {
+    //
+    if (fgets(input, INPUT_SIZE, stdin) == NULL) {
       break;
     }
 
@@ -45,15 +80,16 @@ int main(void) {
     case 'Q':
     case 'e':
     case 'E':
-      running = 0;
-      break;
+      running = false;
+      continue; // while (running) ; skip printing board
 
     case 'r': {
+      // number of generations to run, default to 0
       int num_gens = 0;
       sscanf(input, "r %d", &num_gens);
-      // printf("generations to run: %d\n", generations);
 
-      for (; num_gens > 0; num_gens--, current_gen++) {
+      current_gen += num_gens;
+      for (; num_gens > 0; num_gens--) {
         next_generation(&board);
       }
     } break;
@@ -63,12 +99,36 @@ int main(void) {
       next_generation(&board);
       break;
 
+    case 's': {
+      sscanf(input, "s %u %d", &rand_seed, &initial_live_cells);
+      srand(rand_seed);
+      printf("Seed: %u\n", rand_seed);
+      init_board(&board, initial_live_cells);
+      current_gen = 0;
+    } break;
+
+    case 'l': {
+      sscanf(input, "l %s", input);
+      if (load_board(input, &board) == -1) {
+        continue; // while (running) ; skip printing board
+      }
+      rand_seed = 0;
+      initial_live_cells = 0;
+      current_gen = 0;
+    } break;
+
+    case 'd':
+      break;
+
     case 'h':
     case '?':
     default:
       print_help();
-      break;
+      continue; // while (running) ; skip printing board
     }
+
+    printf("\nGeneration %d:\n", current_gen);
+    display_board(&board);
   }
 
   puts("Thanks for playing!");

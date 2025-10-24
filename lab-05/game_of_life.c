@@ -9,15 +9,15 @@
 
 void init_board(Board *board, int num_alive) {
   // clear the board
-  memset(board->board_flat, CELL_DEAD, sizeof(Board));
+  memset(board, CELL_DEAD, sizeof(Board));
 
   if (num_alive <= 0) {
     return;
   }
 
-  // just fill the board with live cells if more than that are requested
-  if (num_alive > sizeof(Board)) {
-    memset(board->board_flat, CELL_ALIVE, sizeof(Board));
+  // just fill the board with live cells if more are requested than can fit
+  if (num_alive >= sizeof(Board)) {
+    memset(board, CELL_ALIVE, sizeof(Board));
     return;
   }
 
