@@ -6,7 +6,7 @@ all: build/stringReverse build/cryptogramify build/rhombus build/rhombus2
 
 build/%: %.c
 	mkdir -p build
-	$(CC) $(CFLAGS) -o $@ -c $<
+	$(CC) $(CFLAGS) -o $@ $<
 
 .PHONY: clean
 clean:

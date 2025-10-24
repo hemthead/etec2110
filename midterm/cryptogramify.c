@@ -27,8 +27,21 @@ void cryptogramify(char *message) {
   }
 }
 
+// in-class explanation, whoops
+void cryptogramify2(char *message) {
+  for (char *c = message; *c; ++c) {
+    if ('A' <= *c && *c <= 'Z') {
+      *c = 'Z' - (*c - 'A');
+    }
+
+    if ('a' <= *c && *c <= 'z') {
+      *c = 'z' - (*c - 'a');
+    }
+  }
+}
+
 int main(void) {
   char buffer[] = "DSVM BLF XLNV GL Z ULIP RM GSV ILZW, GZPV RG. - BLTR YVIIZ";
-  cryptogramify(buffer);
+  cryptogramify2(buffer);
   printf("%s\n", buffer);
 }
