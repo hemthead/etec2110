@@ -29,8 +29,8 @@ void print_help(void) {
 
 int load_board(char *path, Board *board) {
   FILE *board_file = fopen(path, "r");
-  if (board_file == NULL) {
-    printf("Failed to open '%s'\n", path);
+  if (!board_file) {
+    perror("Failed to load board");
     return -1;
   }
 
@@ -44,6 +44,8 @@ int load_board(char *path, Board *board) {
     fread(board->board[row], sizeof(char), BOARD_WIDTH, board_file);
     fseek(board_file, 1, SEEK_CUR); // this so jank!
   }
+
+  fclose(board_file);
 
   return 0;
 }
@@ -70,7 +72,6 @@ int main(void) {
     printf("Next command: ");
     fflush(stdout);
 
-    //
     if (fgets(input, INPUT_SIZE, stdin) == NULL) {
       break;
     }

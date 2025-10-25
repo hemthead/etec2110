@@ -19,6 +19,6 @@ clean:
 run: build/game-of-life
 	./build/game-of-life
 
-build/submission.zip: *.c *.h makefile *.gol *.md
+build/submission.zip: *.c *.h makefile *.md examples/*
 	mkdir -p build
 	zip -r $@ $^

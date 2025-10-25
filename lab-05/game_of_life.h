@@ -7,6 +7,8 @@
 
 #define BOARD_HEIGHT 20
 #define BOARD_WIDTH 30
+//#define BOARD_WIDTH 40
+//set BOARD_WIDTH to 40 to load factory.gol
 
 // The state of a cell in Conway's Game of Life. (char)
 enum CellState {

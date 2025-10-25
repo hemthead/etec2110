@@ -21,4 +21,4 @@ example. There is a limit to how long a command may be, see `help` for the numbe
 | [q]uit    | None            | Exit the game.                                                                    |
 
 # Disclosure
-Some Game of Life Example patterns sourced from https://conwaylife.appspot.com/library
+Examples taken from https://conwaylife.com/wiki
