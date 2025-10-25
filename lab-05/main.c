@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 #include "game_of_life.h"
@@ -34,17 +35,22 @@ int load_board(char *path, Board *board) {
     return -1;
   }
 
-  // TODO: load board into memory line by line
-  //
-  // char buffer[BOARD_WIDTH+2];
-  // fgets(buffer, BOARD_WIDTH+2, board_file);
+  // temporary board in case there's a formatting error
+  Board tmp_board;
+  char buffer[BOARD_WIDTH + 1];
+
   for (int row = 0; row < BOARD_HEIGHT; row++) {
-    // FIXME: this is scuffed ahh, you'd think a guy would check that it's
-    // formatted correctly first
-    fread(board->board[row], sizeof(char), BOARD_WIDTH, board_file);
-    fseek(board_file, 1, SEEK_CUR); // this so jank!
+    if (fread(buffer, sizeof(char), BOARD_WIDTH + 1, board_file) !=
+            BOARD_WIDTH + 1 ||         // couldn't read full stride, or
+        buffer[BOARD_WIDTH] != '\n') { // stride didn't end with newline
+      fprintf(stderr, "Failed to load board: Bad Formatting\n");
+      return -1;
+    }
+    // copy stride
+    memcpy(tmp_board.board[row], buffer, BOARD_WIDTH);
   }
 
+  memcpy(board, &tmp_board, sizeof(Board));
   fclose(board_file);
 
   return 0;
