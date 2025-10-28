@@ -14,17 +14,25 @@
 
 void print_help(void) {
   printf(
-      "\nEnter in a command to control the game.\n"
+      "Enter in a command to control the game.\n"
       "Commands arbitrarily limited to %d characters of input.\n"
       "Commands:\n"
-      "<ENTER>:        step forward by one generation.\n"
+
+      "[ENTER]:        step forward by one generation.\n"
+
       "r <num>:        step forward by <num> generations.\n"
+
       "s <seed> <num>: set the random seed and reinitialize the board with "
-      "<num> live cells.\n"
+      "<num> live cells. Keeps the current value if <arg> is 0. Shows the "
+      "current seed if no arguments given.\n"
+
       "l <path>:       load a board from a file (formatted same as output).\n"
-      "[d]isplay:      show current generation.\n"
+
+      "[d]isplay:      show current generation (equivalent to `r 0`).\n"
+
       "[q]uit, [e]xit: leave the game.\n"
-      "[h]elp, ?:      show this help.\n\n",
+
+      "[h]elp, ?:      show this help.\n",
       INPUT_SIZE - 1);
 }
 
@@ -75,12 +83,14 @@ int main(void) {
   char input[INPUT_SIZE];
   bool running = true;
   while (running) {
-    printf("Next command: ");
+    printf("\n>>> ");
     fflush(stdout);
 
     if (fgets(input, INPUT_SIZE, stdin) == NULL) {
       break;
     }
+
+    puts(""); // padding between input and output
 
     switch (input[0]) {
     case 'q':
@@ -107,9 +117,30 @@ int main(void) {
       break;
 
     case 's': {
-      sscanf(input, "s %u %d", &rand_seed, &initial_live_cells);
+      // keep the old seed
+      unsigned int old_seed = rand_seed;
+      unsigned int old_cells = initial_live_cells;
+
+      // scan for "s <seed> <cells>"
+      int num_changed =
+          sscanf(input, "s %u %d", &rand_seed, &initial_live_cells);
+
+      // keep values if set to 0
+      if (rand_seed == 0) {
+        rand_seed = old_seed;
+      }
+      if (initial_live_cells == 0) {
+        initial_live_cells = old_cells;
+      }
+
+      printf("Seed: %u\nCells: %d\n", rand_seed, initial_live_cells);
+
+      // don't reset if nothing given
+      if (num_changed == EOF || num_changed == 0) {
+        continue; // while (running) ; skip printing board
+      }
+
       srand(rand_seed);
-      printf("Seed: %u\n", rand_seed);
       init_board(&board, initial_live_cells);
       current_gen = 0;
     } break;
@@ -134,7 +165,7 @@ int main(void) {
       continue; // while (running) ; skip printing board
     }
 
-    printf("\nGeneration %d:\n", current_gen);
+    printf("Generation %d:\n", current_gen);
     display_board(&board);
   }
 
