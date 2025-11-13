@@ -1,4 +1,4 @@
-CFLAGS=-Wall -Werror -Wpedantic
+CFLAGS += -Wall -Werror -Wpedantic
 
 program_LIBRARIES := sdl2
 
