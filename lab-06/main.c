@@ -2,9 +2,10 @@
 // Class.Section: etec2110.01 Systems Programming
 // Lab_Part: 6 SDL Graphics in C
 
+#include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <SDL2/SDL.h>
+#include <time.h>
 
 // returns a random color, according to format.
 Uint32 rand_color(const SDL_PixelFormat *format) {
@@ -12,8 +13,10 @@ Uint32 rand_color(const SDL_PixelFormat *format) {
 }
 
 int main(int argc, char **argv) {
-  const int SCREEN_WIDTH = 800;
-  const int SCREEN_HEIGHT = 600;
+  srand(time(NULL));
+
+  int screen_width = 800;
+  int screen_height = 600;
 
   SDL_Window *window = NULL;
   SDL_Surface *screen_surf = NULL;
@@ -25,8 +28,8 @@ int main(int argc, char **argv) {
   }
 
   window = SDL_CreateWindow("SDL Example", SDL_WINDOWPOS_UNDEFINED,
-                            SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH,
-                            SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+                            SDL_WINDOWPOS_UNDEFINED, screen_width,
+                            screen_height, SDL_WINDOW_SHOWN);
   if (!window) {
     // notify, clean up, and bail
     printf("Window could not be created. SDL_Error: %s\n", SDL_GetError());
@@ -43,10 +46,13 @@ int main(int argc, char **argv) {
     return 1;
   }
 
+  Uint32 current_color = rand_color(screen_surf->format);
+
   // initialize window
-  SDL_FillRect(screen_surf, NULL, rand_color(screen_surf->format));
+  SDL_FillRect(screen_surf, NULL, current_color);
   SDL_UpdateWindowSurface(window);
 
+  // simple, blocking eventloop
   int running = 1;
   SDL_Event event;
   while (running && SDL_WaitEvent(&event)) {
@@ -60,8 +66,7 @@ int main(int argc, char **argv) {
       switch (event.key.keysym.sym) {
 
       case SDLK_r:
-        SDL_FillRect(screen_surf, NULL, rand_color(screen_surf->format));
-        SDL_UpdateWindowSurface(window);
+        current_color = rand_color(screen_surf->format);
         break;
 
       case SDLK_q:
@@ -70,14 +75,31 @@ int main(int argc, char **argv) {
         continue; // eventloop
 
       default:
+        continue;
+      } // key symbol
+    } break; // SDL_KEYDOWN
+
+    case SDL_WINDOWEVENT: {
+      switch (event.window.event) {
+
+      case SDL_WINDOWEVENT_RESIZED:
+        screen_surf = SDL_GetWindowSurface(window);
+        screen_width = event.window.data1;
+        screen_height = event.window.data1;
         break;
-      }
-    } // SDL_KEYDOWN
-    break;
+
+      default:
+        continue;
+      } // window.event
+    } break; // SDL_WINDOWEVENT
 
     default:
-      break;
-    }
+      continue; // eventloop
+    } // event.type
+
+    // update screen
+    SDL_FillRect(screen_surf, NULL, current_color);
+    SDL_UpdateWindowSurface(window);
   }
 
   // clean up and exit
