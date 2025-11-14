@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 // returns a random color, according to format.
 Uint32 rand_color(const SDL_PixelFormat *format) {
@@ -12,6 +13,8 @@ Uint32 rand_color(const SDL_PixelFormat *format) {
 }
 
 int main(int argc, char **argv) {
+  srand(time(NULL));
+
   int screen_width = 800;
   int screen_height = 600;
 
