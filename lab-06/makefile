@@ -6,7 +6,7 @@ LDLIBS += $(shell pkg-config --libs $(program_LIBRARIES))
 CFLAGS += $(shell pkg-config --cflags $(program_LIBRARIES))
 
 .PHONY: all
-all: build/main
+all: build/main build/submission.zip
 
 build/%: %.c
 	mkdir -p build
@@ -15,6 +15,10 @@ build/%: %.c
 .PHONY: clean
 clean:
 	-rm -rf build
+
+.PHONY: run
+run: build/main
+	./build/main
 
 build/submission.zip: *.c makefile
 	mkdir -p build
