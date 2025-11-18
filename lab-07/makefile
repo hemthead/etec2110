@@ -1,3 +1,4 @@
+DEBUG_FLAGS += -g
 CFLAGS += -Wall -Werror -Wpedantic
 
 program_LIBRARIES := sdl2
@@ -8,7 +9,7 @@ CFLAGS += $(shell pkg-config --cflags $(program_LIBRARIES))
 .PHONY: all
 all: build/game-of-life build/submission.zip
 
-build/game-of-life: build/game_of_life.o build/main.o
+build/game-of-life: build/main.o build/game_of_life.o
 	mkdir -p build
 	$(CC) $(CFLAGS) $(LDFLAGS) $(TARGET_ARCH) $^ -o $@ $(LDLIBS)
 
@@ -23,6 +24,10 @@ clean:
 .PHONY: run
 run: build/game-of-life
 	./build/game-of-life
+
+.PHONY: debug
+debug: CFLAGS += $(DEBUG_FLAGS)
+debug: clean build/game-of-life
 
 build/submission.zip: *.c makefile
 	mkdir -p build
