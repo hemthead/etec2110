@@ -29,6 +29,6 @@ run: build/game-of-life
 debug: CFLAGS += $(DEBUG_FLAGS)
 debug: clean build/game-of-life
 
-build/submission.zip: *.c makefile
+build/submission.zip: *.c *.h makefile
 	mkdir -p build
 	zip -r $@ $^

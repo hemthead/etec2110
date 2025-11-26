@@ -1,18 +1,16 @@
-// Name: John Reed
+// Name: [redacted]
 // Class.Section: etec2110.01 Systems Programming
 // Lab_Part: 7
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_events.h>
-#include <SDL2/SDL_pixels.h>
-#include <SDL2/SDL_timer.h>
-#include <SDL2/SDL_video.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <SDL2/SDL.h>
+
 #include "game_of_life.h"
 
-// returns a random color, according to format.
+// Returns a random color, according to `format`.
 Uint32 rand_color(const SDL_PixelFormat *format) {
   return SDL_MapRGB(format, rand() % 0x100, rand() % 0x100, rand() % 0x100);
 }
@@ -49,81 +47,62 @@ int main(int argc, char **argv) {
     return 1;
   }
 
+  // a nice grey
   Uint32 background_color = SDL_MapRGB(screen_surf->format, 0x33, 0x33, 0x33);
 
   // initialize window
   SDL_FillRect(screen_surf, NULL, background_color);
   SDL_UpdateWindowSurface(window);
 
-  // char mouse_button_state[2] = {0};
+  // setup for Game of Life
+  GOL_Board gol_board;
+  const int initial_cells = 10000;
+  bool sim_active = true;
+  GOL_init_board(&gol_board, initial_cells);
 
-  Board gol_board;
-  int initial_cells = 2000;
-  int sim_active = 1;
-  init_board(&gol_board, initial_cells);
-
-  int running = 1;
+  bool running = true;
   SDL_Event event;
   while (running) {
     while (running && SDL_PollEvent(&event)) {
       switch (event.type) {
 
       case SDL_QUIT:
-        running = 0;
+        running = false;
         continue; // eventloop
 
       case SDL_KEYDOWN: {
         switch (event.key.keysym.sym) {
 
-        case SDLK_a: {
-          // place 100 new live cells
-          /*
-          for (int rem_attempts = 1000, rem_cells = 100;
-               rem_attempts && rem_cells; rem_attempts--) {
-            rem_cells -= (gol_board.board_flat[rand() % sizeof(Board)] =
-                              CELL_ALIVE) != CELL_DEAD;
-          }
-          */
+        case SDLK_a:
+          GOL_place_cells(&gol_board, 100);
+          break;
 
-          unsigned int indexes[sizeof(Board)];
-          for (int i = 0; i < sizeof(Board); i++) {
-            indexes[i] = i;
+        case SDLK_k:
+          // cycle through all cells and set to dead with 10% chance
+          for (int i = 0; i < sizeof(GOL_Board); i++) {
+            if (rand() % 10 == 0) {
+              gol_board.board_flat[i] = GOL_CELL_DEAD;
+            }
           }
-          // shuffle
-          for (int i = sizeof(Board) - 1; i > 0; i--) {
-            int j = rand() % (i + 1);
-            int tmp = indexes[i];
-            indexes[i] = indexes[j];
-            indexes[j] = tmp;
-          }
-
-          for (int i = 0, rem_cells = 100; rem_cells > 0 && i < sizeof(Board);
-               i++) {
-            int idx = indexes[i];
-            if (gol_board.board_flat[idx] != CELL_DEAD)
-              continue;
-
-            gol_board.board_flat[idx] = CELL_ALIVE;
-            rem_cells -= 1;
-          }
-        } break;
+          break;
 
         case SDLK_p:
           sim_active = !sim_active;
           break;
 
         case SDLK_r:
-          init_board(&gol_board, initial_cells);
+          GOL_init_board(&gol_board, initial_cells);
           break;
 
+        case SDLK_SPACE:
         case SDLK_s:
           if (!sim_active)
-            next_generation(&gol_board);
+            GOL_next_generation(&gol_board);
           break;
 
         case SDLK_q:
         case SDLK_ESCAPE:
-          running = 0;
+          running = false;
           continue; // eventloop
 
         default:
@@ -135,6 +114,7 @@ int main(int argc, char **argv) {
       case SDL_WINDOWEVENT: {
         switch (event.window.event) {
         case SDL_WINDOWEVENT_SIZE_CHANGED:
+          // get the new surface and repaint the background
           screen_surf = SDL_GetWindowSurface(window);
           SDL_FillRect(screen_surf, NULL, background_color);
           break;
@@ -142,26 +122,33 @@ int main(int argc, char **argv) {
       } break;
 
       case SDL_MOUSEBUTTONDOWN: {
+        // outside board
         if (event.button.x > BOARD_WIDTH * 5 ||
             event.button.y > BOARD_HEIGHT * 5)
           break;
 
+        // set hovered cells alive/dead based on button pressed
         if (event.button.button == SDL_BUTTON_LEFT) {
-          gol_board.board[event.button.y / 5][event.button.x / 5] = CELL_ALIVE;
-        } else if (event.motion.state == SDL_BUTTON_RIGHT) {
-          gol_board.board[event.button.y / 5][event.button.x / 5] = CELL_DEAD;
+          gol_board.board[event.button.y / 5][event.button.x / 5] =
+              GOL_CELL_ALIVE;
+        } else if (event.button.button == SDL_BUTTON_RIGHT) {
+          gol_board.board[event.button.y / 5][event.button.x / 5] =
+              GOL_CELL_DEAD;
         }
       } break;
 
+      // same as SDL_MOUSEBUTTONDOWN
       case SDL_MOUSEMOTION: {
         if (event.motion.x > BOARD_WIDTH * 5 ||
             event.motion.y > BOARD_HEIGHT * 5)
           break;
 
         if (event.motion.state & SDL_BUTTON_LMASK) {
-          gol_board.board[event.motion.y / 5][event.motion.x / 5] = CELL_ALIVE;
+          gol_board.board[event.motion.y / 5][event.motion.x / 5] =
+              GOL_CELL_ALIVE;
         } else if (event.motion.state & SDL_BUTTON_RMASK) {
-          gol_board.board[event.motion.y / 5][event.motion.x / 5] = CELL_DEAD;
+          gol_board.board[event.motion.y / 5][event.motion.x / 5] =
+              GOL_CELL_DEAD;
         }
       } break;
 
@@ -170,10 +157,10 @@ int main(int argc, char **argv) {
       }
     }
 
-    display_board(&gol_board, screen_surf);
+    GOL_display_board(&gol_board, screen_surf);
 
     if (sim_active)
-      next_generation(&gol_board);
+      GOL_next_generation(&gol_board);
 
     SDL_UpdateWindowSurface(window);
     SDL_Delay(20);
@@ -182,4 +169,6 @@ int main(int argc, char **argv) {
   // clean up and exit
   SDL_DestroyWindow(window);
   SDL_Quit();
+
+  return 0;
 }
