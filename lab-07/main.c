@@ -1,6 +1,6 @@
 // Name: [redacted]
 // Class.Section: etec2110.01 Systems Programming
-// Lab_Part: 7
+// Lab_Part: 7 More SDL Graphics in C
 
 #include <stdbool.h>
 #include <stdio.h>

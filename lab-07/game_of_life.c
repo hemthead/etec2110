@@ -1,6 +1,6 @@
 // Name: [redacted]
 // Class.Section: etec2110.01 Systems Programming
-// Lab_Part: 5 Arrays and Functions
+// Lab_Part: 7 More SDL Graphics in C
 
 #include <stdlib.h>
 #include <string.h>
@@ -130,7 +130,8 @@ char GOL_next_state(const GOL_Board *board, unsigned int row,
   // reproduction
   case 3:
     // increment age of live cell, bounded by CELL_ALIVE_MAX
-    return board->board[row][col] + (board->board[row][col] < GOL_CELL_ALIVE_MAX);
+    return board->board[row][col] +
+           (board->board[row][col] < GOL_CELL_ALIVE_MAX);
 
   // overpopulation or invalid
   default:
