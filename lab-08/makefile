@@ -1,7 +1,7 @@
-DEBUG_FLAGS += -g
+DEBUG_FLAGS += -pg
 CFLAGS += -Wall -Werror -Wpedantic -lm
 
-program_LIBRARIES := sdl2
+program_LIBRARIES := sdl3
 
 LDLIBS += $(shell pkg-config --libs $(program_LIBRARIES))
 CFLAGS += $(shell pkg-config --cflags $(program_LIBRARIES))

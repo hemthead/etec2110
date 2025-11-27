@@ -1,2 +1,5 @@
 build/
 a.out
+gmon.out
+*.er
+display.*

@@ -2,9 +2,10 @@
 // Class.Section: etec2110.01 Systems Programming
 // Lab_Part: 8 Linked Lists & Dynamic Memory Allocation in C _ I
 
+#include <SDL3/SDL_render.h>
 #include <stdlib.h>
 
-#include <SDL2/SDL_surface.h>
+#include <SDL3/SDL_surface.h>
 
 #include "blockhead.h"
 
@@ -63,8 +64,9 @@ void BLKHD_remove_from_list(BLKHD_List *list, int index) {
 void BLKHD_free_list(BLKHD_List *list) {
   BLKHD_Blockhead *bh = list->data;
   // walk through list freeing each blockhead
-  for (BLKHD_Blockhead *prev; (prev = bh) != NULL; bh = bh->next) {
-    free(prev);
+  for (BLKHD_Blockhead *next; bh != NULL; bh = next) {
+    next = bh->next;
+    free(bh);
   }
 
   list->data = NULL;
@@ -122,8 +124,9 @@ void BLKHD_render_blockhead(const BLKHD_Blockhead *blockhead,
 }
 */
 
-void BLKHD_render_list(BLKHD_List list, SDL_Surface *surface) {
+void BLKHD_render_list(BLKHD_List list, //SDL_Surface *surface) {
+                       SDL_Renderer *renderer) {
   for (; list.data != NULL; list.data = list.data->next) {
-    BLKHD_render_blockhead(list.data, surface);
+    BLKHD_render_blockhead(list.data, renderer);
   }
 }

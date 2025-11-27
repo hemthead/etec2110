@@ -5,24 +5,28 @@
 #ifndef BLKHD_BLOCKHEAD_H
 #define BLKHD_BLOCKHEAD_H
 
-#include <SDL2/SDL_rect.h>
-#include <SDL2/SDL_stdinc.h>
-#include <SDL2/SDL_surface.h>
+#include <SDL3/SDL_rect.h>
+#include <SDL3/SDL_render.h>
+#include <SDL3/SDL_stdinc.h>
+#include <SDL3/SDL_surface.h>
 
 #define BLKHD_GROWTH_FACTOR 2
+
+typedef struct BLKHD_Color {
+  Uint8 r, g, b, a;
+} BLKHD_Color;
 
 // A little bouncy guy.
 typedef struct BLKHD_Blockhead {
   // Pointer to next `BLKHD_Blockhead` in linked list. Not used by dynamic array.
   struct BLKHD_Blockhead *next;
-  // Position.
+
   float x, y;
-  // Velocity.
   float dx, dy;
-  // Color, as returned by `SDL_MapRGB`.
-  Uint32 color;
+  BLKHD_Color color;
+
   // Size in px.
-  int size;
+  unsigned int size;
 } BLKHD_Blockhead;
 
 // A list of `BLKHD_Blockhead`s
@@ -57,9 +61,11 @@ void BLKHD_move_list(BLKHD_List list, const SDL_Rect *bounds);
 
 // Render `blockhead` to `surface`.
 void BLKHD_render_blockhead(const BLKHD_Blockhead *blockhead,
-                            SDL_Surface *surface);
+                            //SDL_Surface *surface);
+                            SDL_Renderer *renderer);
 
 // Render `list` of `BLKHD_Blockhead` to `surface`.
-void BLKHD_render_list(const BLKHD_List list, SDL_Surface *surface);
+void BLKHD_render_list(const BLKHD_List list, //SDL_Surface *surface);
+                            SDL_Renderer *renderer);
 
 #endif

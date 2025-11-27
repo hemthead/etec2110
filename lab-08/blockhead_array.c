@@ -2,11 +2,11 @@
 // Class.Section: etec2110.01 Systems Programming
 // Lab_Part: 8 Linked Lists & Dynamic Memory Allocation in C _ II
 
-//#include <math.h>
+// #include <math.h>
 #include <stddef.h>
 #include <stdlib.h>
 
-#include <SDL2/SDL_surface.h>
+#include <SDL3/SDL_surface.h>
 
 #include "blockhead.h"
 
@@ -80,8 +80,9 @@ void BLKHD_render_blockhead(const BLKHD_Blockhead *blockhead,
 }
 */
 
-void BLKHD_render_list(BLKHD_List list, SDL_Surface *surface) {
+void BLKHD_render_list(BLKHD_List list, // SDL_Surface *surface) {
+                       SDL_Renderer *renderer) {
   for (size_t i = 0; i < list.len; i++) {
-    BLKHD_render_blockhead(&list.data[i], surface);
+    BLKHD_render_blockhead(&list.data[i], renderer);
   }
 }
