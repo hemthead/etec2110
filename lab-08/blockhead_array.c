@@ -10,7 +10,7 @@
 
 #include "blockhead.h"
 
-BLKHD_Blockhead *BLKHD_add_to_list(BLKHD_List *list) {
+BLKHD_Blockhead *BLKHD_list_add(BLKHD_List *list) {
   if (list->len < list->cap) {
     return &list->data[list->len++];
   }
@@ -28,8 +28,9 @@ BLKHD_Blockhead *BLKHD_add_to_list(BLKHD_List *list) {
   return &list->data[list->len++];
 }
 
-void BLKHD_remove_from_list(BLKHD_List *list, int index) {
-  if (list->len == 0) {
+void BLKHD_list_remove(BLKHD_List *list, unsigned int index) {
+  if (list->len < 2) {
+    list->len = 0;
     return;
   }
 
@@ -37,9 +38,9 @@ void BLKHD_remove_from_list(BLKHD_List *list, int index) {
   list->data[index] = list->data[--list->len];
 }
 
-void BLKHD_free_list(BLKHD_List *list) { free(list->data); }
+void BLKHD_list_free(BLKHD_List *list) { free(list->data); }
 
-inline int BLKHD_list_get_len(BLKHD_List list) { return list.len; }
+inline int BLKHD_list_len(BLKHD_List list) { return list.len; }
 
 /*
 void BLKHD_move_blockhead(BLKHD_Blockhead *blockhead, const SDL_Rect *bounds) {
@@ -65,9 +66,9 @@ void BLKHD_move_blockhead(BLKHD_Blockhead *blockhead, const SDL_Rect *bounds) {
 }
 */
 
-void BLKHD_move_list(BLKHD_List list, const SDL_Rect *bounds) {
+void BLKHD_list_update(BLKHD_List list, const SDL_Rect *bounds) {
   for (size_t i = 0; i < list.len; i++) {
-    BLKHD_move_blockhead(&list.data[i], bounds);
+    BLKHD_blockhead_update(&list.data[i], bounds);
   }
 }
 
@@ -80,9 +81,9 @@ void BLKHD_render_blockhead(const BLKHD_Blockhead *blockhead,
 }
 */
 
-void BLKHD_render_list(BLKHD_List list, // SDL_Surface *surface) {
+void BLKHD_list_render(BLKHD_List list, // SDL_Surface *surface) {
                        SDL_Renderer *renderer) {
   for (size_t i = 0; i < list.len; i++) {
-    BLKHD_render_blockhead(&list.data[i], renderer);
+    BLKHD_blockhead_render(&list.data[i], renderer);
   }
 }

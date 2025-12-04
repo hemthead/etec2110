@@ -1,4 +1,4 @@
-DEBUG_FLAGS += -pg
+DEBUG_FLAGS += -g
 CFLAGS += -Wall -Werror -Wpedantic -lm
 
 program_LIBRARIES := sdl3
@@ -35,4 +35,4 @@ debug: clean all
 
 build/submission.zip: *.c *.h makefile
 	mkdir -p build
-	zip -r $@ $^
+	7z a $@ $^

@@ -2,14 +2,14 @@
 // Class.Section: etec2110.01 Systems Programming
 // Lab_Part: 8 Linked Lists & Dynamic Memory Allocation in C _ I
 
-#include <SDL3/SDL_render.h>
 #include <stdlib.h>
 
+#include <SDL3/SDL_render.h>
 #include <SDL3/SDL_surface.h>
 
 #include "blockhead.h"
 
-BLKHD_Blockhead *BLKHD_add_to_list(BLKHD_List *list) {
+BLKHD_Blockhead *BLKHD_list_add(BLKHD_List *list) {
   // allocate new blockhead
   BLKHD_Blockhead *next = malloc(sizeof(BLKHD_Blockhead));
   if (next == NULL) {
@@ -27,7 +27,7 @@ BLKHD_Blockhead *BLKHD_add_to_list(BLKHD_List *list) {
   return next;
 }
 
-void BLKHD_remove_from_list(BLKHD_List *list, int index) {
+void BLKHD_list_remove(BLKHD_List *list, unsigned int index) {
   if (list->data == NULL) {
     return;
   }
@@ -61,7 +61,7 @@ void BLKHD_remove_from_list(BLKHD_List *list, int index) {
   free(match);
 }
 
-void BLKHD_free_list(BLKHD_List *list) {
+void BLKHD_list_free(BLKHD_List *list) {
   BLKHD_Blockhead *bh = list->data;
   // walk through list freeing each blockhead
   for (BLKHD_Blockhead *next; bh != NULL; bh = next) {
@@ -72,7 +72,7 @@ void BLKHD_free_list(BLKHD_List *list) {
   list->data = NULL;
 }
 
-int BLKHD_list_get_len(BLKHD_List list) {
+int BLKHD_list_len(BLKHD_List list) {
   int i = 1;
   if (list.data == NULL) {
     return 0;
@@ -109,9 +109,9 @@ void BLKHD_move_blockhead(BLKHD_Blockhead *blockhead, const SDL_Rect *bounds) {
 }
 */
 
-void BLKHD_move_list(BLKHD_List list, const SDL_Rect *bounds) {
+void BLKHD_list_update(BLKHD_List list, const SDL_Rect *bounds) {
   for (; list.data != NULL; list.data = list.data->next) {
-    BLKHD_move_blockhead(list.data, bounds);
+    BLKHD_blockhead_update(list.data, bounds);
   }
 }
 
@@ -124,9 +124,8 @@ void BLKHD_render_blockhead(const BLKHD_Blockhead *blockhead,
 }
 */
 
-void BLKHD_render_list(BLKHD_List list, //SDL_Surface *surface) {
-                       SDL_Renderer *renderer) {
+void BLKHD_list_render(BLKHD_List list, SDL_Renderer *renderer) {
   for (; list.data != NULL; list.data = list.data->next) {
-    BLKHD_render_blockhead(list.data, renderer);
+    BLKHD_blockhead_render(list.data, renderer);
   }
 }
