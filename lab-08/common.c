@@ -4,7 +4,6 @@
 
 #include <SDL3/SDL_pixels.h>
 #include <SDL3/SDL_render.h>
-#include <SDL3/SDL_surface.h>
 #include <math.h>
 
 #include "blockhead.h"
@@ -62,8 +61,8 @@ void BLKHD_blockhead_render(const BLKHD_Blockhead *blockhead,
   const float step = blockhead->size / 5.0;
 
   // offset face toward direction of travel!
-  rects[0].x += (fmax(-step / 2, fmin(blockhead->dx, step / 2)));
-  rects[0].y += (fmax(-step / 2, fmin(blockhead->dy, step / 2)));
+  rects[0].x += (fmax(-step / 2.0, fmin(blockhead->dx, step / 2.0)));
+  rects[0].y += (fmax(-step / 2.0, fmin(blockhead->dy, step / 2.0)));
 
   // left eye
   rects[0].x += step;
@@ -84,6 +83,7 @@ void BLKHD_blockhead_render(const BLKHD_Blockhead *blockhead,
   rects[2].h = step;
 
   // render face rects together
+  // black
   SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
   SDL_RenderFillRects(renderer, rects, 3);
 }

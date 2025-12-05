@@ -4,9 +4,6 @@
 
 #include <stdlib.h>
 
-#include <SDL3/SDL_render.h>
-#include <SDL3/SDL_surface.h>
-
 #include "blockhead.h"
 
 BLKHD_Blockhead *BLKHD_list_add(BLKHD_List *list) {
@@ -20,7 +17,7 @@ BLKHD_Blockhead *BLKHD_list_add(BLKHD_List *list) {
   // put it in the front of the list
   next->next = list->data;
 
-  // point the user-given list to new blockhead
+  // point the user-given list to start at new blockhead
   list->data = next;
 
   // return ptr to new blockhead
@@ -72,60 +69,27 @@ void BLKHD_list_free(BLKHD_List *list) {
   list->data = NULL;
 }
 
-int BLKHD_list_len(BLKHD_List list) {
+int BLKHD_list_len(const BLKHD_List *list) {
   int i = 1;
-  if (list.data == NULL) {
+  if (list->data == NULL) {
     return 0;
   }
 
-  for (; list.data->next != NULL; i++, list.data = list.data->next) {
+  for (BLKHD_Blockhead *bh = list->data; bh->next != NULL; i++, bh = bh->next) {
     ;
   }
 
   return i;
 }
 
-/*
-void BLKHD_move_blockhead(BLKHD_Blockhead *blockhead, const SDL_Rect *bounds) {
-  // add velocity vector
-  blockhead->x += blockhead->dx;
-  blockhead->y += blockhead->dy;
-
-  // Reverse vector components upon collision
-  if (blockhead->x <= bounds->x ||
-      blockhead->x >= bounds->x + bounds->w - blockhead->size) {
-    blockhead->dx = -blockhead->dx;
-  }
-  if (blockhead->y <= bounds->y ||
-      blockhead->y >= bounds->y + bounds->h - blockhead->size) {
-    blockhead->dy = -blockhead->dy;
-  }
-
-  blockhead->x = fmax(blockhead->x, bounds->x);
-  blockhead->x = fmin(blockhead->x, bounds->x + bounds->w - blockhead->size);
-
-  blockhead->y = fmax(blockhead->y, bounds->y);
-  blockhead->y = fmin(blockhead->y, bounds->y + bounds->h - blockhead->size);
-}
-*/
-
-void BLKHD_list_update(BLKHD_List list, const SDL_Rect *bounds) {
-  for (; list.data != NULL; list.data = list.data->next) {
-    BLKHD_blockhead_update(list.data, bounds);
+void BLKHD_list_update(const BLKHD_List *list, const SDL_Rect *bounds) {
+  for (BLKHD_Blockhead *bh = list->data; bh != NULL; bh = bh->next) {
+    BLKHD_blockhead_update(bh, bounds);
   }
 }
 
-/*
-void BLKHD_render_blockhead(const BLKHD_Blockhead *blockhead,
-                            SDL_Surface *surface) {
-  SDL_Rect rect = {blockhead->x, blockhead->y, blockhead->size,
-                   blockhead->size};
-  SDL_FillRect(surface, &rect, blockhead->color);
-}
-*/
-
-void BLKHD_list_render(BLKHD_List list, SDL_Renderer *renderer) {
-  for (; list.data != NULL; list.data = list.data->next) {
-    BLKHD_blockhead_render(list.data, renderer);
+void BLKHD_list_render(const BLKHD_List *list, SDL_Renderer *renderer) {
+  for (BLKHD_Blockhead *bh = list->data; bh != NULL; bh = bh->next) {
+    BLKHD_blockhead_render(bh, renderer);
   }
 }

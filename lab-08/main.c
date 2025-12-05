@@ -1,9 +1,8 @@
 // Name: John Reed
 // Class.Section: etec2110.01 Systems Programming
-// Lab_Part: 6 SDL Graphics in C
+// Lab_Part: 8 Linked Lists & Dynamic Memory Allocation in C
 
 #include <SDL3/SDL_render.h>
-#include <SDL3/SDL_timer.h>
 #include <math.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -47,22 +46,27 @@ void randomize_blockhead(BLKHD_Blockhead *blockhead, SDL_Rect *bounds) {
 
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
+
+// bounding rect for blockheads to bounce in
 SDL_Rect bounds;
 
-// NOTE: These are no longer needed
 #define INIT_SCREEN_WIDTH 800
 #define INIT_SCREEN_HEIGHT 600
 #define INIT_BLOCKHEAD_COUNT 30
 
+// this is either a linked list or a dynamic array of our blockheads
 BLKHD_List blockheads = {0};
 
+// is the blockhead simulation running, or paused?
 bool sim_active = true;
-bool vsync_enabled = false;
 
 struct {
+  // the starting position for a blockhead placing action (m1 first held)
   float x, y;
+  // whether we're in a blockhead placing action (m1 is held and initial
+  // position was recorded)
   bool active;
-} mouse_down;
+} blkhd_placing_action;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
   if (!SDL_Init(SDL_INIT_VIDEO)) {
@@ -83,12 +87,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
 
   SDL_srand(time(NULL));
 
-  // vsync_enabled = SDL_SetRenderVSync(renderer, SDL_RENDERER_VSYNC_ADAPTIVE);
-  SDL_SetRenderLogicalPresentation(renderer, INIT_SCREEN_WIDTH,
-                                   INIT_SCREEN_HEIGHT,
-                                   SDL_LOGICAL_PRESENTATION_DISABLED);
-
-  bounds = (SDL_Rect){0, 0, INIT_SCREEN_WIDTH, INIT_SCREEN_WIDTH};
+  // set the bounds based on viewport, for initializing blockheads.
+  // on sway, this isn't really accurate, because the window is immediately
+  // resized, but it's a good enough guess
+  SDL_GetRenderViewport(renderer, &bounds);
 
   // initialize blockheads
   for (int i = 0; i < INIT_BLOCKHEAD_COUNT; i++) {
@@ -123,12 +125,20 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
       break;
 
     case SDLK_R: {
-      int len = BLKHD_list_len(blockheads);
+      int len = BLKHD_list_len(&blockheads);
 
       for (int i = 0; i < len; i++) {
         if (SDL_rand(10) == 0) {
+          // this is pretty ineffective for the linked list specifically, on
+          // account of traversing the list every iteration. In practice, this
+          // is unimportant because it only happens when the user presses 'r';
+          // and due to the fact that blockheads are killed with 10% chance,
+          // subsequent presses will have to deal with a much shorter list
           BLKHD_list_remove(&blockheads, i);
-          len -= 1; // removing 1
+
+          // removing 1, go back over current index as everything is now shifted
+          i -= 1;
+          len -= 1;
         }
       }
     } break;
@@ -145,27 +155,36 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
   case SDL_EVENT_MOUSE_BUTTON_DOWN: {
     if (event->button.button == SDL_BUTTON_LEFT) {
       SDL_ConvertEventToRenderCoordinates(renderer, event);
-      mouse_down.active = true;
-      mouse_down.x = event->button.x;
-      mouse_down.y = event->button.y;
+
+      // register entering a blockhead placing action
+      blkhd_placing_action.active = true;
+      blkhd_placing_action.x = event->button.x;
+      blkhd_placing_action.y = event->button.y;
     }
   } break;
 
   case SDL_EVENT_MOUSE_BUTTON_UP: {
-    if (event->button.button == SDL_BUTTON_LEFT && mouse_down.active) {
+    if (event->button.button == SDL_BUTTON_LEFT &&
+        blkhd_placing_action.active) {
       SDL_ConvertEventToRenderCoordinates(renderer, event);
 
       // add new blockhead centered on initial click position, with velocity
       // based on vector to that position
       BLKHD_Blockhead *bh = BLKHD_list_add(&blockheads);
-      randomize_blockhead(bh, &bounds);
-      bh->x = mouse_down.x - (bh->size / 2.0);
-      bh->y = mouse_down.y - (bh->size / 2.0);
-      bh->dx = (mouse_down.x - event->button.x) / 10.0;
-      bh->dy = (mouse_down.y - event->button.y) / 10.0;
 
-      // no longer clicking
-      mouse_down.active = false;
+      // get random color and size (other fields will be reassigned)
+      randomize_blockhead(bh, &bounds);
+
+      // center on action position
+      bh->x = blkhd_placing_action.x - (bh->size / 2.0);
+      bh->y = blkhd_placing_action.y - (bh->size / 2.0);
+
+      // set velocities based on delta
+      bh->dx = (blkhd_placing_action.x - event->button.x) / 10.0;
+      bh->dy = (blkhd_placing_action.y - event->button.y) / 10.0;
+
+      // no longer in action
+      blkhd_placing_action.active = false;
     }
   } break;
   }
@@ -180,7 +199,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
   SDL_SetRenderDrawColor(renderer, 0x33, 0x33, 0x33, SDL_ALPHA_OPAQUE);
   SDL_RenderClear(renderer);
 
-  // update bounds based to be what's visible
+  // update bounds
   SDL_GetRenderViewport(renderer, &bounds);
 
   // get state of mouse this frame
@@ -220,35 +239,41 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
         if ((bh->x < mouse_x && mouse_x < bh->x + bh->size) &&
             (bh->y < mouse_y && mouse_y < bh->y + bh->size)) {
           BLKHD_list_remove(&blockheads, i);
+          i -= 1; // go back over index, new element is swapped in
         }
       }
     }
   }
 
   if (sim_active) {
-    BLKHD_list_update(blockheads, &bounds);
+    BLKHD_list_update(&blockheads, &bounds);
   }
 
-  BLKHD_list_render(blockheads, renderer);
+  BLKHD_list_render(&blockheads, renderer);
 
   // if the mouse is held, render line showing dv of pending blockhead, and a
   // nice animation indicating where the blockhead will spawn
-  if (mouse_down.active) {
+  if (blkhd_placing_action.active) {
+    // white
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE);
 
     // render line
-    SDL_RenderLine(renderer, mouse_down.x, mouse_down.y, mouse_x, mouse_y);
+    SDL_RenderLine(renderer, blkhd_placing_action.x, blkhd_placing_action.y,
+                   mouse_x, mouse_y);
 
     // render box where boxhead will show up
+
     // s = SDL_GetTicks() / 1000;
     // Period sin(s) = 2PI
     // Period sin(2s) = PI
     // Period sin(2PI * s) = 1
     // 2PI * s = SDL_GetTicks / (500/PI)
     float size = sin(SDL_GetTicks() / (500.0 / M_PI)) * 5 + 15; // period of 1s
+
+    // center blockhead on initial click position
     SDL_FRect rect;
-    rect.x = mouse_down.x - size / 2.0;
-    rect.y = mouse_down.y - size / 2.0;
+    rect.x = blkhd_placing_action.x - size / 2.0;
+    rect.y = blkhd_placing_action.y - size / 2.0;
     rect.w = size;
     rect.h = size;
     SDL_RenderRect(renderer, &rect);
@@ -258,7 +283,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
 
   // run at 60fps max
   Uint64 elapsed_time = SDL_GetTicksNS() - frame_start;
-  Uint64 nsPerFrame = 1000000000 / 60;
+  const Uint64 nsPerFrame = 1000000000 / 60;
   if (elapsed_time < nsPerFrame) {
     SDL_DelayNS(nsPerFrame - elapsed_time);
   }

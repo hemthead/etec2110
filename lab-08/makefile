@@ -1,3 +1,7 @@
+# Name: John Reed
+# Class.Section: etec2110.01 Systems Programming
+# Lab_Part: 8 Linked Lists & Dynamic Memory Allocation in C
+
 DEBUG_FLAGS += -g
 CFLAGS += -Wall -Werror -Wpedantic -lm
 
@@ -7,13 +11,13 @@ LDLIBS += $(shell pkg-config --libs $(program_LIBRARIES))
 CFLAGS += $(shell pkg-config --cflags $(program_LIBRARIES))
 
 .PHONY: all
-all: build/program1 build/program2 build/submission.zip
+all: build/blockheads-linked-list build/blockheads-dynamic-array build/submission.zip
 
-build/program1: build/main.o build/common.o build/blockhead_list.o
+build/blockheads-linked-list: build/main.o build/common.o build/blockhead_list.o
 	mkdir -p build
 	$(CC) $(CFLAGS) $(LDFLAGS) $(TARGET_ARCH) $^ -o $@ $(LDLIBS)
 
-build/program2: build/main.o build/common.o build/blockhead_array.o
+build/blockheads-dynamic-array: build/main.o build/common.o build/blockhead_array.o
 	mkdir -p build
 	$(CC) $(CFLAGS) $(LDFLAGS) $(TARGET_ARCH) $^ -o $@ $(LDLIBS)
 
@@ -24,10 +28,6 @@ build/%.o: %.c *.h
 .PHONY: clean
 clean:
 	-rm -rf build
-
-.PHONY: run
-run: build/game-of-life
-	./build/game-of-life
 
 .PHONY: debug
 debug: CFLAGS += $(DEBUG_FLAGS)
