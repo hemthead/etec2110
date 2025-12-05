@@ -3,3 +3,7 @@ a.out
 gmon.out
 *.er
 display.*
+*.zip
+test.*
+.venv
+*.bak

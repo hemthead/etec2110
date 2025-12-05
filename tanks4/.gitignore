@@ -1,0 +1,23 @@
+# Python-generated files
+__pycache__/
+#*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# too big!
+assets/
+
+# decompiling + patching
+*.sig
+*.patched
+*.linux
+pycdas
+pycdc
+/test*
+*.bak
+*\~

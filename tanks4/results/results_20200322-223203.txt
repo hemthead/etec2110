@@ -1,0 +1,40 @@
+ Rank Name             House       Hits Health Score   FileName                 
+  1   HAL9002          Yost          20    78   400   HAL9002                  
+  2   HAL9001          Yost           8   100   160   HAL9001                  
+  3   HAL9000          Yost           2     0    20   HAL9000                  
+  4   uwu_yagorl       404 ERROR      0     0     0   256239                   
+  5   HelpMe           Lyons          0     0     0   259059                   
+Error Log:
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+  error: tank=HelpMe 'list' object has no attribute 'name'
+End
